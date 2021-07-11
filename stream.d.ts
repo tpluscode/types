@@ -3,7 +3,7 @@
 
 import { EventEmitter } from "events";
 
-import { BaseQuad, StarQuad, TermPattern } from './data-model';
+import { BaseQuad, Quad, TermPattern } from './data-model';
 
 /**
  * A quad stream.
@@ -18,7 +18,7 @@ import { BaseQuad, StarQuad, TermPattern } from './data-model';
  * Optional events:
  * * prefix(prefix: string, iri: RDF.NamedNode): This event is emitted every time a prefix is mapped to some IRI.
  */
-export interface Stream<Q extends BaseQuad = StarQuad> extends EventEmitter {
+export interface Stream<Q extends BaseQuad = Quad> extends EventEmitter {
     /**
      * This method pulls a quad out of the internal buffer and returns it.
      * If there is no quad available, then it will return null.
@@ -35,7 +35,7 @@ export interface Stream<Q extends BaseQuad = StarQuad> extends EventEmitter {
  *
  * For example, parsers and transformations which generate quads can implement the Source interface.
  */
-export interface Source<OutQuad extends BaseQuad = StarQuad, InQuad extends BaseQuad = StarQuad> {
+export interface Source<OutQuad extends BaseQuad = Quad, InQuad extends BaseQuad = Quad> {
     /**
      * Returns a stream that processes all quads matching the pattern.
      *
@@ -77,7 +77,7 @@ export interface Sink<InputStream extends EventEmitter, OutputStream extends Eve
  *
  * Access to stores LDP or SPARQL endpoints can be implemented with a Store inteface.
  */
-export interface Store<OutQuad extends BaseQuad = StarQuad, InQuad extends BaseQuad = StarQuad> extends Source<OutQuad>, Sink<Stream<InQuad>, EventEmitter> {
+export interface Store<OutQuad extends BaseQuad = Quad, InQuad extends BaseQuad = Quad> extends Source<OutQuad>, Sink<Stream<InQuad>, EventEmitter> {
     /**
      * Removes all streamed quads.
      *

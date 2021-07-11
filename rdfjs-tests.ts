@@ -1,5 +1,5 @@
 import { BlankNode, DataFactory, Dataset, DatasetCore, DatasetCoreFactory, DatasetFactory, DefaultGraph, Literal,
-  NamedNode, Quad, BaseQuad, StarQuad, PlainQuad, StarRole, PlainRole, Sink, Source, Store, Stream, Term, Variable, Quad_Graph } from ".";
+    NamedNode, Quad, BaseQuad, Rdf11Quad, Sink, Source, Store, Stream, Term, Variable, Quad_Graph } from ".";
 import { EventEmitter } from "events";
 
 function test_terms() {
@@ -66,7 +66,7 @@ function test_quads() {
         quad.equals(quad);
     }
     {
-        const quad: StarQuad = <any> {};
+        const quad: Quad = <any> {};
         const s1: StarRole.Subject = quad.subject;
         const p1: StarRole.Predicate = quad.predicate;
         const o1: StarRole.Object = quad.object;
@@ -74,7 +74,7 @@ function test_quads() {
         quad.equals(quad);
     }
     {
-        const quad: PlainQuad = <any> {};
+        const quad: Rdf11Quad = <any> {};
         const s1: PlainRole.Subject = quad.subject;
         const p1: PlainRole.Predicate = quad.predicate;
         const o1: PlainRole.Object = quad.object;
@@ -626,17 +626,17 @@ class DatasetExt extends DatasetCoreExt implements Dataset {
 
 
 async function test_dataset_covariance_plain(): Promise<Dataset> {
-    const quad: PlainQuad = <any> {};
-    const dataset: Dataset<PlainQuad> = <any> {};
+    const quad: Rdf11Quad = <any> {};
+    const dataset: Dataset<Rdf11Quad> = <any> {};
 
     // rdf-ext-like quad
-    interface QuadExt extends PlainQuad {
+    interface QuadExt extends Rdf11Quad {
         toCanonical(): string;
     }
-    let datasetExt: Dataset<QuadExt, PlainQuad> = <any> {};
+    let datasetExt: Dataset<QuadExt, Rdf11Quad> = <any> {};
 
     // stream coming from a generic parser
-    const stream: Stream<PlainQuad> = <any> {};
+    const stream: Stream<Rdf11Quad> = <any> {};
 
     datasetExt = datasetExt.add(quad);
     datasetExt = datasetExt.delete(quad);
@@ -657,7 +657,7 @@ class DatasetCoreExtPlain extends DatasetCoreExt {
         return newInstance;
     }
 
-    [Symbol.iterator](): Iterator<PlainQuad> {
+    [Symbol.iterator](): Iterator<Rdf11Quad> {
         throw new Error("Method not implemented.");
     }
 }

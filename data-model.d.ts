@@ -1,6 +1,9 @@
 /* Data Model Interfaces */
 /* https://rdf.js.org/data-model-spec/ */
 
+import {RdfStar} from './data-model/rdf-star'
+import {Rdf11} from './data-model/rdf1.1';
+
 /**
  * Contains an Iri, RDF blank Node, RDF literal, variable name, default graph, or a quad
  * @see NamedNode
@@ -58,7 +61,7 @@ export interface BlankNode {
 /**
  * An RDF literal, containing a string with an optional language tag and/or datatype.
  */
-export interface Literal<Datatype extends StarRole.Datatype=StarRole.Datatype> {
+export interface Literal<Datatype extends NamedNode = RdfStar['Datatype']> {
     /**
      * Contains the constant "Literal".
      */
@@ -133,80 +136,36 @@ export interface DefaultGraph {
  */
 export type TermPattern = Variable | null;
 
-
-/**
- * Unions of Term types for the various roles they play in 'plain' RDF 1.1 Data
- */
- export namespace PlainRole {
-    export type Subject = NamedNode | BlankNode;
-    export type Predicate = NamedNode;
-    export type Object = NamedNode | BlankNode | Literal<Datatype>;
-    export type Graph = DefaultGraph | NamedNode | BlankNode;
-    export type Datatype = NamedNode;
-    export type Quad = PlainQuad;
- }
-
-/**
- * Unions of Term types for the various
- */
- export namespace PlainPatern {
-    export type Subject = PlainRole.Subject | TermPattern;
-    export type Predicate = PlainRole.Predicate | TermPattern;
-    export type Object = PlainRole.Object | TermPattern;
-    export type Graph = PlainRole.Graph | TermPattern;
-    export type Datatype = PlainRole.Datatype | TermPattern;
-    export type Quad = PlainQuad | TermPattern;
- }
-
-
-/**
- * Unions of Term types for the various roles they play in RDF-star data
- */
- export namespace StarRole {
-    export type Subject = PlainRole.Subject | StarQuad;
-    export type Predicate = PlainRole.Predicate;
-    export type Object = NamedNode | BlankNode | Literal<Datatype> | StarQuad;
-    export type Graph = PlainRole.Graph;
-    export type Datatype = PlainRole.Datatype;
-    export type Quad = StarQuad;
- }
- 
-/**
- * Unions of Term types for the various
- */
-export namespace StarPatern {
-    export type Subject = StarRole.Subject | TermPattern;
-    export type Predicate = StarRole.Predicate | TermPattern;
-    export type Object = StarRole.Object | TermPattern;
-    export type Graph = StarRole.Graph | TermPattern;
-    export type Datatype = StarRole.Datatype | TermPattern;
-    export type Quad = StarQuad | TermPattern;
+interface Role {
+    Subject: Term
+    Predicate: Term
+    Object: Term
+    Graph: Term
 }
-
 
 /**
  * The subject, which is a NamedNode, BlankNode or Variable.
- * @deprecated Consider using one of the following types instead: @see StarRole.Subject, @see StarPattern.Subject, @see PlainRole.Subject, or @see PlainPatern.Subject
+ * @deprecated Consider using one of the following types instead: @see RdfStar.Subject, @see StarPattern.Subject, @see PlainRole.Subject, or @see PlainPatern.Subject
  */
-export type Quad_Subject = StarRole.Subject | Variable;
+export type Quad_Subject = RdfStar['Subject'] | Variable;
 
- /**
-  * The predicate, which is a NamedNode or Variable.
- * @deprecated Consider using one of the following types instead: @see StarRole.Predicate, @see StarPattern.Predicate, @see PlainRole.Predicate, or @see PlainPatern.Predicate
-  */
-export type Quad_Predicate = StarRole.Predicate | Variable;
- 
- /**
-  * The object, which is a NamedNode, Literal, BlankNode or Variable.
- * @deprecated Consider using one of the following types instead: @see StarRole.Object, @see StarPattern.Object, @see PlainRole.Object, or @see PlainPatern.Object
-  */
-export type Quad_Object = StarRole.Object | Variable;
- 
- /**
-  * The named graph, which is a DefaultGraph, NamedNode, BlankNode or Variable.
- * @deprecated Consider using one of the following types instead: @see StarRole.Graph, @see StarPattern.Graph, @see PlainRole.Graph, or @see PlainPatern.Graph
-  */
-export type Quad_Graph = StarRole.Graph | Variable;
+/**
+ * The predicate, which is a NamedNode or Variable.
+ * @deprecated Consider using one of the following types instead: @see RdfStar.Predicate, @see StarPattern.Predicate, @see PlainRole.Predicate, or @see PlainPatern.Predicate
+ */
+export type Quad_Predicate = RdfStar['Predicate'] | Variable;
+
+/**
+ * The object, which is a NamedNode, Literal, BlankNode or Variable.
+ * @deprecated Consider using one of the following types instead: @see RdfStar.Object, @see StarPattern.Object, @see PlainRole.Object, or @see PlainPatern.Object
+ */
+export type Quad_Object = RdfStar['Object'] | Variable;
+
+/**
+ * The named graph, which is a DefaultGraph, NamedNode, BlankNode or Variable.
+ * @deprecated Consider using one of the following types instead: @see RdfStar.Graph, @see StarPattern.Graph, @see PlainRole.Graph, or @see PlainPatern.Graph
+ */
+export type Quad_Graph = RdfStar['Graph'] | Variable;
 
 /**
  * An RDF quad, taking any Term in its positions, containing the subject, predicate, object and graph terms.
@@ -245,89 +204,39 @@ export interface BaseQuad {
     equals(other: Term | null | undefined): boolean;
 }
 
-/**
- * @deprecated This interface allows for `Variable` term types in the quad components. Consider using either @see StarQuad or @see PlainQuad instead
- */
- export interface Quad extends BaseQuad {
+export interface Quad<R extends Role = RdfStar> extends BaseQuad {
     /**
      * The subject.
      * @see Quad_Subject
      */
-    subject: Quad_Subject;
+    subject: R['Subject'];
     /**
      * The predicate.
      * @see Quad_Predicate
      */
-    predicate: Quad_Predicate;
+    predicate: R['Predicate'];
     /**
      * The object.
      * @see Quad_Object
      */
-    object: Quad_Object;
+    object: R['Object'];
     /**
      * The named graph.
      * @see Quad_Graph
      */
-    graph: Quad_Graph;
+    graph: R['Graph'];
 }
 
 /**
  * An RDF quad, containing the subject, predicate, object and graph terms.
  */
-export interface StarQuad extends BaseQuad {
-    /**
-     * The subject.
-     * @see StarRole.Subject
-     */
-    subject: StarRole.Subject;
-    /**
-     * The predicate.
-     * @see StarRole.Predicate
-     */
-    predicate: StarRole.Predicate;
-    /**
-     * The object.
-     * @see StarRole.Object
-     */
-    object: StarRole.Object;
-    /**
-     * The named graph.
-     * @see StarRole.Graph
-     */
-    graph: StarRole.Graph;
-}
-
-/**
- * An RDF quad, containing the subject, predicate, object and graph terms.
- */
-export interface PlainQuad extends StarQuad {
-    /**
-     * The subject.
-     * @see PlainRole.Subject
-     */
-    subject: PlainRole.Subject;
-    /**
-     * The predicate.
-     * @see PlainRole.Predicate
-     */
-    predicate: PlainRole.Predicate;
-    /**
-     * The object.
-     * @see PlainRole.Object
-     */
-    object: PlainRole.Object;
-    /**
-     * The named graph.
-     * @see PlainRole.Graph
-     */
-    graph: PlainRole.Graph;
-}
+export type Rdf11Quad = Quad<Rdf11>
 
 
 /**
  * A factory for instantiating RDF terms and quads.
  */
-export interface DataFactory<OutQuad extends BaseQuad = StarQuad, InQuad extends BaseQuad = StarQuad> {
+export interface DataFactory<OutQuad extends BaseQuad = Quad, InQuad extends BaseQuad = Quad> {
     /**
      * @param value The IRI for the named node.
      * @return A new instance of NamedNode.
