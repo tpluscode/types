@@ -1,6 +1,8 @@
 import { BlankNode, DataFactory, Dataset, DatasetCore, DatasetCoreFactory, DatasetFactory, DefaultGraph, Literal,
     NamedNode, Quad, BaseQuad, Rdf11Quad, Sink, Source, Store, Stream, Term, Variable, Quad_Graph } from ".";
 import { EventEmitter } from "events";
+import { RdfStar } from './data-model/rdf-star';
+import { Rdf11 } from "./data-model/rdf1.1";
 
 function test_terms() {
     // Only types are checked in this tests,
@@ -67,18 +69,18 @@ function test_quads() {
     }
     {
         const quad: Quad = <any> {};
-        const s1: StarRole.Subject = quad.subject;
-        const p1: StarRole.Predicate = quad.predicate;
-        const o1: StarRole.Object = quad.object;
-        const g1: StarRole.Graph = quad.graph;
+        const s1: RdfStar.Subject = quad.subject;
+        const p1: RdfStar.Predicate = quad.predicate;
+        const o1: RdfStar.Object = quad.object;
+        const g1: RdfStar.Graph = quad.graph;
         quad.equals(quad);
     }
     {
         const quad: Rdf11Quad = <any> {};
-        const s1: PlainRole.Subject = quad.subject;
-        const p1: PlainRole.Predicate = quad.predicate;
-        const o1: PlainRole.Object = quad.object;
-        const g1: PlainRole.Graph = quad.graph;
+        const s1: Rdf11.Subject = quad.subject;
+        const p1: Rdf11.Predicate = quad.predicate;
+        const o1: Rdf11.Object = quad.object;
+        const g1: Rdf11.Graph = quad.graph;
         quad.equals(quad);
     }
 }
@@ -116,15 +118,15 @@ function test_datafactory() {
 }
 
 function test_datafactory_star() {
-    const dataFactory: DataFactory<StarQuad> = <any> {};
+    const dataFactory: DataFactory<Quad> = <any> {};
 
     // Compose the triple "<<ex:bob ex:age 23>> ex:certainty 0.9."
-    const quadBobAge: StarQuad = dataFactory.quad(
+    const quadBobAge: Quad = dataFactory.quad(
         dataFactory.namedNode('ex:bob'),
         dataFactory.namedNode('ex:age'),
         dataFactory.literal('23'),
     );
-    const quadBobAgeCertainty: StarQuad = dataFactory.quad(
+    const quadBobAgeCertainty: Quad = dataFactory.quad(
         quadBobAge,
         dataFactory.namedNode('ex:certainty'),
         dataFactory.literal('0.9'),
@@ -132,7 +134,7 @@ function test_datafactory_star() {
 
     // Decompose the triple
     if (quadBobAgeCertainty.subject.termType === 'Quad') {
-        const quadBobAge2: StarQuad = quadBobAgeCertainty.subject;
+        const quadBobAge2: Quad = quadBobAgeCertainty.subject;
 
         const equalToSelf: boolean = quadBobAge2.equals(quadBobAge);
         const notEqualToOtherType: boolean = quadBobAge2.equals(dataFactory.namedNode('ex:something:else'));
@@ -140,10 +142,10 @@ function test_datafactory_star() {
 }
 
 function test_datafactory_star_basequad() {
-    const dataFactory: DataFactory<StarQuad, BaseQuad> = <any> {};
+    const dataFactory: DataFactory<Quad, BaseQuad> = <any> {};
 
     // Compose the triple "<<ex:bob ex:age 23>> ex:certainty 0.9."
-    const quadBobAge: StarQuad = dataFactory.quad(
+    const quadBobAge: Quad = dataFactory.quad(
         dataFactory.namedNode('ex:bob'),
         dataFactory.namedNode('ex:age'),
         dataFactory.literal('23'),
@@ -176,7 +178,7 @@ function test_stream() {
     const matchStream8: Stream<BaseQuad> = source.match(term, term, term, term);
 
     const sink: Sink<Stream<BaseQuad>, EventEmitter> = <any> {};
-    const graph: StarRole.Graph = <any> {};
+    const graph: RdfStar.Graph = <any> {};
     const eventEmitter1: EventEmitter = sink.import(stream);
 
     const store: Store<BaseQuad, BaseQuad> = <any> {};
@@ -194,12 +196,12 @@ function test_stream() {
 
 function test_stream_components() {
     const stream: Stream = <any> {};
-    const quad: StarQuad | null = stream.read();
+    const quad: Quad | null = stream.read();
 
-    const subject: StarRole.Subject = <any> {};
-    const predicate: StarRole.Predicate = <any> {};
-    const object: StarRole.Object = <any> {};
-    const graph: StarRole.Graph = <any> {};
+    const subject: RdfStar.Subject = <any> {};
+    const predicate: RdfStar.Predicate = <any> {};
+    const object: RdfStar.Object = <any> {};
+    const graph: RdfStar.Graph = <any> {};
     const source: Source = <any> {};
     const matchStream1: Stream = source.match();
     const matchStream2: Stream = source.match(subject);
@@ -277,22 +279,22 @@ function test_dataset() {
         graph: Term;
     }
 
-    interface QuadBnodeStar extends StarQuad {
-        subject: StarRole.Subject;
-        predicate: StarRole.Predicate;
-        object: StarRole.Object;
-        graph: StarRole.Graph;
+    interface QuadBnodeStar extends Quad {
+        subject: RdfStar.Subject;
+        predicate: RdfStar.Predicate;
+        object: RdfStar.Object;
+        graph: RdfStar.Graph;
     }
 
     const quad: BaseQuad = <any> {};
-    const quadStar: StarQuad = <any> {};
+    const quadStar: Quad = <any> {};
     const quadBnode: QuadBnode = <any> {};
     const quadBnodeStar: QuadBnodeStar = <any> {};
     const term: Term = <any> {};
-    const subject: StarRole.Subject = <any> {};
-    const predicate: StarRole.Predicate = <any> {};
-    const object: StarRole.Object = <any> {};
-    const graph: StarRole.Graph = <any> {};
+    const subject: RdfStar.Subject = <any> {};
+    const predicate: RdfStar.Predicate = <any> {};
+    const object: RdfStar.Object = <any> {};
+    const graph: RdfStar.Graph = <any> {};
 
     const stream1: Stream<BaseQuad> = <any> {};
     const stream2: Stream<QuadBnode> = <any> {};
@@ -410,30 +412,30 @@ function test_dataset() {
     const dataset6DeleteMatches5: Dataset = dataset6.deleteMatches(subject, predicate, object, graph);
     const dataset6Difference: Dataset = dataset6.difference(dataset5);
     const dataset6Equals: boolean = dataset6.equals(dataset5);
-    const dataset6Every: boolean = dataset6.every((quad: StarQuad, dataset: Dataset) => true);
-    const dataset6Filter: Dataset = dataset6.filter((quad: StarQuad, dataset: Dataset) => true);
-    dataset6.forEach((quad: StarQuad, dataset: Dataset) => {
+    const dataset6Every: boolean = dataset6.every((quad: Quad, dataset: Dataset) => true);
+    const dataset6Filter: Dataset = dataset6.filter((quad: Quad, dataset: Dataset) => true);
+    dataset6.forEach((quad: Quad, dataset: Dataset) => {
         return
     });
     const dataset6Has: boolean = dataset6.has(quadStar);
     const dataset6Import: Promise<Dataset> = dataset6.import(stream3);
     const dataset6Intersection: Dataset = dataset6.intersection(dataset5);
-    const dataset6Map: Dataset = dataset6.map((quad: StarQuad, dataset: Dataset) => quad);
+    const dataset6Map: Dataset = dataset6.map((quad: Quad, dataset: Dataset) => quad);
     const dataset6Match1: Dataset = dataset6.match();
     const dataset6Match2: Dataset = dataset6.match(subject);
     const dataset6Match3: Dataset = dataset6.match(subject, predicate);
     const dataset6Match4: Dataset = dataset6.match(subject, predicate, object);
     const dataset6Match5: Dataset = dataset6.match(subject, predicate, object, graph);
-    const dataset6Reduce1: string = dataset6.reduce((acc: string, quad: StarQuad, dataset: Dataset) => acc);
-    const dataset6Reduce2: boolean[] = dataset6.reduce((acc: boolean[], quad: StarQuad, dataset: Dataset) => acc, []);
-    const dataset6Reduce3: string = dataset6.reduce((acc: string, quad: StarQuad, dataset: Dataset) => acc, '');
-    const dataset6Some: boolean = dataset6.some((quad: StarQuad, dataset: Dataset) => true);
-    const dataset6ToArray: StarQuad[] = [...dataset6];
+    const dataset6Reduce1: string = dataset6.reduce((acc: string, quad: Quad, dataset: Dataset) => acc);
+    const dataset6Reduce2: boolean[] = dataset6.reduce((acc: boolean[], quad: Quad, dataset: Dataset) => acc, []);
+    const dataset6Reduce3: string = dataset6.reduce((acc: string, quad: Quad, dataset: Dataset) => acc, '');
+    const dataset6Some: boolean = dataset6.some((quad: Quad, dataset: Dataset) => true);
+    const dataset6ToArray: Quad[] = [...dataset6];
     const dataset6ToCanonical: string = dataset6.toCanonical();
     const dataset6ToStream: Stream = dataset6.toStream();
     const dataset6ToString: string = dataset6.toString();
     const dataset6Union: Dataset = dataset6.union(dataset5);
-    const dataset6Iterable: Iterable<StarQuad> = dataset6;
+    const dataset6Iterable: Iterable<Quad> = dataset6;
     const dataset6Core: DatasetCore = dataset6;
 
 
@@ -495,14 +497,14 @@ function test_datasetFactory_covariance() {
 }
 
 async function test_dataset_covariance(): Promise<Dataset> {
-    const quad: StarQuad = <any> {};
+    const quad: Quad = <any> {};
     const dataset: Dataset = <any> {};
 
     // rdf-ext-like quad
-    interface QuadExt extends StarQuad {
+    interface QuadExt extends Quad {
         toCanonical(): string;
     }
-    let datasetExt: Dataset<QuadExt, StarQuad> = <any> {};
+    let datasetExt: Dataset<QuadExt, Quad> = <any> {};
 
     // stream coming from a generic parser
     const stream: Stream = <any> {};
@@ -540,7 +542,7 @@ class DatasetCoreExt implements DatasetCore {
         return newInstance;
     }
 
-    [Symbol.iterator](): Iterator<StarQuad> {
+    [Symbol.iterator](): Iterator<Quad> {
         throw new Error("Method not implemented.");
     }
 }

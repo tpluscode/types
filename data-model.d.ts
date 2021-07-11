@@ -61,7 +61,7 @@ export interface BlankNode {
 /**
  * An RDF literal, containing a string with an optional language tag and/or datatype.
  */
-export interface Literal<Datatype extends NamedNode = RdfStar['Datatype']> {
+export interface Literal<Datatype extends NamedNode = RdfStar.Datatype> {
     /**
      * Contains the constant "Literal".
      */
@@ -147,25 +147,25 @@ interface Role {
  * The subject, which is a NamedNode, BlankNode or Variable.
  * @deprecated Consider using one of the following types instead: @see RdfStar.Subject, @see StarPattern.Subject, @see PlainRole.Subject, or @see PlainPatern.Subject
  */
-export type Quad_Subject = RdfStar['Subject'] | Variable;
+export type Quad_Subject = RdfStar.Subject | Variable;
 
 /**
  * The predicate, which is a NamedNode or Variable.
  * @deprecated Consider using one of the following types instead: @see RdfStar.Predicate, @see StarPattern.Predicate, @see PlainRole.Predicate, or @see PlainPatern.Predicate
  */
-export type Quad_Predicate = RdfStar['Predicate'] | Variable;
+export type Quad_Predicate = RdfStar.Predicate | Variable;
 
 /**
  * The object, which is a NamedNode, Literal, BlankNode or Variable.
  * @deprecated Consider using one of the following types instead: @see RdfStar.Object, @see StarPattern.Object, @see PlainRole.Object, or @see PlainPatern.Object
  */
-export type Quad_Object = RdfStar['Object'] | Variable;
+export type Quad_Object = RdfStar.Object | Variable;
 
 /**
  * The named graph, which is a DefaultGraph, NamedNode, BlankNode or Variable.
  * @deprecated Consider using one of the following types instead: @see RdfStar.Graph, @see StarPattern.Graph, @see PlainRole.Graph, or @see PlainPatern.Graph
  */
-export type Quad_Graph = RdfStar['Graph'] | Variable;
+export type Quad_Graph = RdfStar.Graph | Variable;
 
 /**
  * An RDF quad, taking any Term in its positions, containing the subject, predicate, object and graph terms.
